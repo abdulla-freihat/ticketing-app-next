@@ -26,7 +26,7 @@ export const POST = async (req, res, next) => {
 export const GET = async (req, res, next) => {
   try {
 
-    const tickets = await Ticket.find({}).sort({createdAt :-1}) //sort tickets in asc order ;
+    const tickets = await Ticket.find().sort({createdAt :-1}) //sort tickets in asc order ;
 
     return NextResponse.json({ tickets }, { status: 201 });
   } catch (err) {
