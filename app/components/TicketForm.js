@@ -1,10 +1,12 @@
 'use client'
 import { useRouter } from "next/navigation"
 import { useState } from "react"
+import {  toast } from 'react-toastify';
+
 
 const TicketForm = () => {
 
-
+       const router = useRouter();
 
     const [formData , setFormData] = useState({
 
@@ -39,13 +41,38 @@ const TicketForm = () => {
       
         e.preventDefault();
 
-    
+    try{
+
+         const res = await fetch('/api/tickets' ,{
+
+             method:'POST',
+             body:JSON.stringify({formData}),
+             headers:{'content-type' : 'application/json'}
+         })
+
+
+         if(!res.ok){
+
+             toast.error('Failed to create Ticket , try again.')
+         }
+
+
+         toast.success('Ticket created successfully.');
+         router.refresh();
+         router.push('/');
+
+    }catch(err){
+
+
+        toast.error('Failed to create Ticket , try again.')
+
+    }
          
     }
 
   return (
     <div className=" max-w-3xl mx-auto p-5">
-    <form className="flex flex-col gap-6" onSubmit={handleSubmit}>
+    <form className="flex flex-col gap-6" method='post' onSubmit={handleSubmit}>
          <h3 className="text-xl font-bold"> Create Your Ticket</h3>
 
            <div className="flex flex-col gap-3">
