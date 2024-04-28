@@ -17,3 +17,19 @@ export const POST = async (req, res, next) => {
     return NextResponse.json({ message: "Error", err }, { status: 500 });
   }
 };
+
+
+
+// get tickets api route
+
+
+export const GET = async (req, res, next) => {
+  try {
+
+    const tickets = await Ticket.find({}).sort({createdAt :-1}) //sort tickets in asc order ;
+
+    return NextResponse.json({ tickets }, { status: 201 });
+  } catch (err) {
+    return NextResponse.json({ message: "Error", err }, { status: 500 });
+  }
+};
