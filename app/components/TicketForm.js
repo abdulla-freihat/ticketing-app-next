@@ -4,76 +4,106 @@ import { useState } from "react"
 import {  toast } from 'react-toastify';
 
 
-const TicketForm = () => {
-
-       const router = useRouter();
-
-    const [formData , setFormData] = useState({
-
-         title:'',
-         description:'',
-         category:'Hardware Problem',
-         priority:1,
-         progress:0,
-         status:"Not Started",
-         
-
-    })
+const TicketForm = ({ticket}) => {
 
 
-    const handleChange = (e)=>{
+    const EDITMODE = ticket._id !== 'new';
+    const router = useRouter();
 
-         const value = e.target.value;
-         const name = e.target.name;
+    let initialFormData = {
+        title: '',
+        description: '',
+        category: 'Hardware Problem',
+        priority: 1,
+        progress: 0,
+        status: "Not Started",
+    };
 
-         setFormData((prev) => (
-
-            {
-                ...prev ,
-                 [name]:value
-            }
-
-         ))
+    if (EDITMODE) {
+        initialFormData = {
+            title: ticket.title,
+            description: ticket.description,
+            category: ticket.category,
+            priority: ticket.priority,
+            progress: ticket.progress,
+            status: ticket.status,
+        };
     }
 
+    const [formData, setFormData] = useState(initialFormData);
 
-    const handleSubmit = async(e)=>{
-      
+    const handleChange = (e) => {
+        const value = e.target.value;
+        const name = e.target.name;
+
+        setFormData(prev => ({
+            ...prev,
+            [name]: value
+        }));
+    };
+
+    const handleSubmit = async (e) => {
         e.preventDefault();
 
-    try{
-
-         const res = await fetch('/api/tickets' ,{
-
-             method:'POST',
-             body:JSON.stringify({formData}),
-             headers:{'content-type' : 'application/json'}
-         })
+         if(EDITMODE){
 
 
-         if(!res.ok){
+            try {
+                const res = await fetch(`/api/tickets/${ticket._id}`, {
+                    method: 'PUT',
+                    body: JSON.stringify({ formData }),
+                    headers: { 'content-type': 'application/json' }
+                });
+    
+                if (!res.ok) {
+                    toast.error('Failed to update Ticket, try again.');
+                }
 
-             toast.error('Failed to create Ticket , try again.')
+              
+            } catch (err) {
+                toast.error('Failed to update Ticket, try again.');
+            }
+
+
+             
+         }else{
+
+
+            try {
+                const res = await fetch('/api/tickets', {
+                    method: 'POST',
+                    body: JSON.stringify({ formData }),
+                    headers: { 'content-type': 'application/json' }
+                });
+    
+                if (!res.ok) {
+                    toast.error('Failed to create Ticket, try again.');
+                }
+    
+                
+            } catch (err) {
+                toast.error('Failed to create Ticket, try again.');
+            }
+
+             
          }
 
 
-         toast.success('Ticket created successfully.');
+
+
+         toast.success(EDITMODE ? 'Ticket Updated Successfully' : 'Ticket Created Successfully');
          router.refresh();
          router.push('/');
+       
+    };
 
-    }catch(err){
 
 
-        toast.error('Failed to create Ticket , try again.')
-
-    }
-         
-    }
 
   return (
     <div className=" max-w-3xl mx-auto p-5">
     <form className="flex flex-col gap-6" method='post' onSubmit={handleSubmit}>
-         <h3 className="text-xl font-bold"> Create Your Ticket</h3>
+         <h3 className="text-xl font-bold"> {EDITMODE ? 'Update Your Ticket' : 'Create Your Ticket'}</h3>
 
            <div className="flex flex-col gap-3">
               <label htmlFor="title">Title</label>
@@ -152,7 +182,7 @@ const TicketForm = () => {
            </div>
 
 
-           <button type='submit' className="bg-blue-accent hover:bg-blue-accent-hover rounded-md p-2">Submit</button>
+           <button type='submit' className="bg-blue-accent hover:bg-blue-accent-hover rounded-md p-2">{EDITMODE ? 'Update Ticket' : 'Create Ticket'}</button>
 
     </form>
 

@@ -1,11 +1,17 @@
+
+'use client'
+ 
 import DeleteBlock from "./DeleteBlock";
 import PriorityDisplay from "./PriorityDisplay";
 import ProgressDisplay from "./ProgressDisplay";
 import StatusDisplay from "./StatusDisplay";
 
+import Link from "next/link";
 
 const TicketCard = ({ticket}) => {
   return (
+
+
     <div className="flex flex-col  bg-card hover:bg-card-hover  rounded-md shadow-lg p-3 m-2">
       <div className="flex mb-3">
         <PriorityDisplay priority={ticket.priority} />
@@ -13,6 +19,8 @@ const TicketCard = ({ticket}) => {
         <DeleteBlock ticketId={ticket._id} />
         </div>
       </div>
+
+      <Link className="cursor-pointer" href={`/TicketPage/${ticket._id}`}>
       <h4 className="font-bold text-xl">{ticket.title}</h4>
       <hr className="h-px border-0 bg-page mb-2 "></hr>
       <p className="whitespace-pre-wrap text-sm"> {ticket.description}</p>
@@ -26,8 +34,12 @@ const TicketCard = ({ticket}) => {
       <div className="ml-auto flex items-end">
       <StatusDisplay status={ticket.status} />
       </div>
+
+       
       </div>
+      </Link>
     </div>
+ 
   );
 };
 
